@@ -67,6 +67,12 @@ SELECT titulo,tipo,fechaedicion
 SELECT nombreAutor,titulo 
     FROM autores a,libros l, autor_libro al
     WHERE   a.idautor = al.autorid  AND l.idlibro = al.libroid;
+    
+    
+    SELECT NombreAUTOR FROM autores WHERE IDAUTOR in
+        (SELECT IDAUTOR FROM autor_libro WHERE libroID IN
+            (SELECT libroID FROM libros WHERE lower(titulo) like '%datos%'));
+    
 
 commit;
 
