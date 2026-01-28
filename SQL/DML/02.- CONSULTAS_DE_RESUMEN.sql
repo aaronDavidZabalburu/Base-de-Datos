@@ -15,7 +15,7 @@ Emplea la funci�n ROUND si te aparecen muchos decimales.
 
         SELECT idoficina, AVG(cuota)"M Cuota" , AVG(ventas)"M Ventas"
          FROM  empleados
-         where idoficina IN ('11','12','21')
+         where idoficina IN (11,12,21)
          group by idoficina;
 
 /* 3.- Mostrar la cuota media y las ventas medias de todos los empleados de cada una de las oficinas.
@@ -23,9 +23,10 @@ El listado queremos que aparezca ordenado por oficina.
 Emplea la funci�n ROUND si te aparecen muchos decimales.
 /ROUND(funci�n(campo) ,n�decimales)*/
 
-    SELECT idoficina "oficina", idempleado "Empleado", AVG(cuota)"M Cuota" , AVG(ventas)"M Ventas"
+    SELECT  ROUND(AVG(cuota),2)"M Cuota" , ROUND(AVG(ventas),2)"M Ventas"
     FROM empleados
-    GROUP BY idoficina, idempleado;
+    GROUP BY idoficina
+    ORDER BY idoficina;
     
     
 
@@ -106,22 +107,34 @@ SELECT EXTRACT(YEAR FROM FALTA) "AÑO", COUNT(*)
     GROUP BY  EXTRACT(YEAR FROM FALTA)
     ORDER BY 1;
 /* 14.- �Y si queremos mostrar solamente el n�mero de clientes que han sido dados de alta en los a�os 2017, 2018 y 2020?*/
-SELECT idcliente, COUNT (EXTRACT (YEAR FROM falta)) "AÑO"
+SELECT EXTRACT (YEAR FROM falta), COUNT (EXTRACT (YEAR FROM falta)) "AÑO"
     FROM CLIENTES
-    WHERE EXTRACT (YEAR FROM falta) IN (2017, 2018, 2020)
-    GROUP BY idcliente, EXTRACT (YEAR FROM falta)
+    WHERE EXTRACT (YEAR FROM falta) IN (2002, 2005, 2010)
+    GROUP BY EXTRACT (YEAR FROM falta)
     ORDER BY 1 ;
-
 /* 15.- Mostrar cuantos pedidos han sido enviados en el mismo a�o en el que han sido realizados, pero en diferente mes.*/
-
+SELECT EXTRACT (YEAR FROM fpedido) "AÑO" , EXTRACT (MONTH FROM FENVIO) "MES",COUNT(fenvio)
+    FROM PEDIDOS
+    group by EXTRACT (YEAR FROM fpedido), EXTRACT (MONTH FROM FENVIO)
+    order by 1;
 
 /* 16.- Mostrar por cada director de oficina, cuantas oficinas dirige, 
 qu� objetivo medio ten�a para sus oficinas y cuales han sido las ventas medias de sus oficinas.
 El listado aparecer� ordenado por las ventas medias de las oficinas de mayor a menor.*/
-
+SELECT DIRECTOR , COUNT(*) "OFICINAS", ROUND(AVG(OBJETIVO),2)"OBJETIVO", ROUND(AVG(VENTAS),2)"VENTAS"
+    FROM OFICINAS
+    group by director
+    order by ventas DESC;
 
 /* 17.- Mostrar de cada fabricante cu�l es el precio m�s caro y m�s barato de sus productos.
 Mostrar el listado ordenado por fabricante.*/
-
+SELECT idfabricante, MAX(PUNITARIO) "MAS CARO", MIN(PUNITARIO)"MAS BARATO"
+    FROM PRODUCTOS
+    GROUP BY IDFABRICANTE
+    ORDER BY IDFABRICANTE ASC;
 
 /* 18.- Mostrar de cada ciudad cu�l es el objetivo m�nimo de sus oficinas.*/
+SELECT CIUDAD, COUNT (*)"OFICINAS",  MIN(OBJETIVO)"OBJETIVO MINIMO" 
+    FROM OFICINAS
+    GROUP BY CIUDAD
+    ORDER BY CIUDAD;
