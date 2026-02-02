@@ -115,6 +115,8 @@ SELECT EXTRACT (YEAR FROM falta), COUNT (EXTRACT (YEAR FROM falta)) "AÑO"
 /* 15.- Mostrar cuantos pedidos han sido enviados en el mismo a�o en el que han sido realizados, pero en diferente mes.*/
 SELECT EXTRACT (YEAR FROM fpedido) "AÑO" , EXTRACT (MONTH FROM FENVIO) "MES",COUNT(fenvio)
     FROM PEDIDOS
+    WHERE  EXTRACT (YEAR FROM fpedido) = EXTRACT (YEAR FROM fpedido) AND 
+    EXTRACT (MOTH FROM fpedido) !=  EXTRACT (MONTH FROM fenvio)
     group by EXTRACT (YEAR FROM fpedido), EXTRACT (MONTH FROM FENVIO)
     order by 1;
 
