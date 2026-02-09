@@ -4,8 +4,7 @@ SELECT  o.idoficina, o.region, o.ciudad, e.idempleado, e.nombre
 FROM OFICINAS o, EMPLEADOS e
 WHERE e.idoficina = o.idoficina AND 
     LOWER(o.region)= 'este';
-
-
+    
 /*2.- Listar los pedidos mostrando su n�mero, importe, c�digo y nombre del cliente, su fecha de alta.*/
 SELECT lp.codigo, SUM(lp.punitario*lp.cantidad), c.idcliente, c.nombre, c.falta  
  FROM LINEAS_PEDIDOS lp, CLIENTES c, PEDIDOS p
@@ -83,8 +82,11 @@ SELECT * FROM PEDIDOS;
 SELECT * FROM LINEAS_PEDIDOS;
 
 SELECT p.numpedido, lp.cantidad, SUM(lp.punitario*lp.cantidad) AS "IMPORTE", pr.idfabricante, pr.descripcion
-FROM PRODUCTOS p, PEDIDOS pr, LINEAS_PEDIDOS lp
-WHERE pr.
+FROM PRODUCTOS pr, PEDIDOS p, LINEAS_PEDIDOS lp
+WHERE pr.idfabricante = lp.fabricante 
+  AND pr.idproducto = lp.codigo
+  AND (LOWER(pr.descripcion) LIKE '%cuchara%' OR LOWER (pr.descripcion) LIKE '%cuchillo%')
+  GROUP BY  p.numpedido, lp.cantidad, pr.idfabricante, pr.descripcion ;
 
 
 
