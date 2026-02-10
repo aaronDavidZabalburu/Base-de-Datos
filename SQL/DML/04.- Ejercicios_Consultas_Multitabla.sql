@@ -94,6 +94,25 @@ WHERE pr.idfabricante = lp.fabricante
 /*9.- Listar el n�mero de pedidos e importe de los mismos que cada empleado ha realizado a cada cliente.
 Se mostrar� el n�mero y nombre del cliente, el n�mero y nombre del empleado, la cantidad de pedidos y el importe del pedido.*/
 
-/*10.- Listar el n�mero de oficinas que dirige cada uno de los empleados. */
+SELECT 
+    c.idcliente, c.nombre AS "Cliente", e.idempleado, e.nombre AS "Empleado", COUNT(DISTINCT p.codigo) AS "Cant_Pedidos", SUM(lp.punitario * lp.cantidad) AS "Importe_Total"
+FROM CLIENTES c, EMPLEADOS e, PEDIDOS p, LINEAS_PEDIDOS lp
+WHERE c.idcliente = p.idcliente 
+  AND e.idempleado = p.idvendedor
+  AND p.codigo = lp.codigo
+GROUP BY c.idcliente, c.nombre, e.idempleado, e.nombre;
 
+/*10.- Listar el n�mero de oficinas que dirige cada uno de los empleados. */
+SELECT * FROM OFICINAS;
+
+SELECT e.idempleado, e.nombre, COUNT(o.idoficina) AS "Oficinas_Dirigidas"
+FROM EMPLEADOS e, OFICINAS o
+WHERE e.idempleado = o.director
+GROUP BY e.idempleado, e.nombre;
 /*Listar el n�mero de oficinas que tengan ventas que dirige cada uno de los empleados.*/ 
+
+SELECT e.idempleado, e.nombre, COUNT(o.idoficina) AS "Oficinas_Con_Ventas"
+FROM EMPLEADOS e, OFICINAS o
+WHERE e.idempleado = o.director
+  AND o.ventas > 0
+GROUP BY e.idempleado, e.nombre;
