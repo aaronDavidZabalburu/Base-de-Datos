@@ -81,12 +81,13 @@ SELECT * FROM PRODUCTOS;
 SELECT * FROM PEDIDOS;
 SELECT * FROM LINEAS_PEDIDOS;
 
-SELECT p.numpedido, lp.cantidad, SUM(lp.punitario*lp.cantidad) AS "IMPORTE", pr.idfabricante, pr.descripcion
+SELECT p.numpedido, lp.cantidad, (lp.punitario*lp.cantidad) || ' €' AS "IMPORTE", pr.idfabricante, pr.descripcion
 FROM PRODUCTOS pr, PEDIDOS p, LINEAS_PEDIDOS lp
 WHERE pr.idfabricante = lp.fabricante 
-  AND pr.idproducto = lp.codigo
+  AND p.codigo = lp.codigo
+  AND pr.idproducto = lp.producto
   AND (LOWER(pr.descripcion) LIKE '%cuchara%' OR LOWER (pr.descripcion) LIKE '%cuchillo%')
-  GROUP BY  p.numpedido, lp.cantidad, pr.idfabricante, pr.descripcion ;
+  GROUP BY  p.numpedido, lp.cantidad,(lp.punitario*lp.cantidad), pr.idfabricante, pr.descripcion ;
 
 
 
