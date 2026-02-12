@@ -25,14 +25,14 @@ SELECT * FROM EMPLEADOS;
 
 SELECT o.*, e.nombre, o.objetivo
 FROM OFICINAS o, EMPLEADOS e
-WHERE e.idoficina = o.idoficina AND
+WHERE e.idempleado = o.director AND
 objetivo > 590000;
 
 /*5.- Listar los pedidos con importe superior a 10000�. Se mostrar�n los c�digos y n�meros de pedidos, junto con su importe.*/
 SELECT * FROM PEDIDOS;
 SELECT * FROM LINEAS_PEDIDOS;
 
-SELECT p.codigo, p.numpedido, SUM(lp.punitario*lp.cantidad) 
+SELECT p.codigo, p.numpedido, SUM(lp.punitario*lp.cantidad) AS "IMPORTE"
 FROM PEDIDOS p, LINEAS_PEDIDOS lp
 WHERE p.codigo = lp.codigo
 GROUP BY p.codigo, p.numpedido
@@ -43,13 +43,14 @@ SELECT * FROM EMPLEADOS;
 SELECT * FROM CLIENTES;
 SELECT * FROM PEDIDOS;
 
-SELECT p.codigo, p.numpedido, SUM(lp.punitario*lp.cantidad), e.nombre, c.nombre 
+SELECT p.codigo, p.numpedido, SUM(lp.punitario*lp.cantidad), e.nombre "EMPLEADO", c.nombre "CLIENTE"
 FROM PEDIDOS p, LINEAS_PEDIDOS lp, CLIENTES c, EMPLEADOS e
 WHERE p.codigo = lp.codigo AND
 e.idempleado = p.idvendedor AND
 c.idcliente = p.idcliente
 GROUP BY p.codigo, p.numpedido,e.nombre, c.nombre 
 HAVING SUM(lp.punitario*lp.cantidad) > 10000;
+
 /*6.- Listar los empleados que realizaron sus primeros pedidos el d�a que fueron contratados. Mostrar el nombre del empleado,
 fecha de contrato, c�digo e importe de esos pedidos.*/
 SELECT * FROM EMPLEADOS;
