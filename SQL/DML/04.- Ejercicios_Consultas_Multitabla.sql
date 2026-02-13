@@ -101,7 +101,8 @@ FROM CLIENTES c, EMPLEADOS e, PEDIDOS p, LINEAS_PEDIDOS lp
 WHERE c.idcliente = p.idcliente 
   AND e.idempleado = p.idvendedor
   AND p.codigo = lp.codigo
-GROUP BY c.idcliente, c.nombre, e.idempleado, e.nombre;
+GROUP BY c.idcliente, c.nombre, e.idempleado, e.nombre
+order by idcliente;
 
 /*10.- Listar el n�mero de oficinas que dirige cada uno de los empleados. */
 SELECT * FROM OFICINAS;
