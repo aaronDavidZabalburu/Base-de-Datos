@@ -1,0 +1,33 @@
+CREATE TABLE CUENTAS(
+    idCuenta NUMBER(5) CONSTRAINT PK_CUENTAS PRIMARY KEY,
+    Nombre VARCHAR2(20) CONSTRAINT NN_Nombre_CUENTA NOT NULL CONSTRAINT U_Nombre_CUENTA UNIQUE,
+    tipo VARCHAR2(10) CONSTRAINT CK_TIPO_CUENTA CHECK(LOWER(tipo) IN ('banco','efectivo')),
+    Saldo NUMBER(10,2) DEFAULT 0.00,
+    fechaAlta DATE DEFAULT SYSDATE,
+    iban VARCHAR2(24) CONSTRAINT check_iban_es CHECK (SUBSTR(iban, 1, 2) = 'ES')
+);
+
+CREATE TABLE CATEGORIAS(
+    idCategoria CHAR(5) CONSTRAINT PK_CATEGORIA PRIMARY KEY,
+    Nombre VARCHAR2(20) CONSTRAINT NN_Nombre_CATEGORIA NOT NULL CONSTRAINT U_Nombre_CATEGORIA UNIQUE,
+    tipo VARCHAR2(10) CONSTRAINT CK_TIPO_CATEGORIA CHECK(LOWER(tipo) IN ('ingreso','gasto'))
+);
+
+CREATE TABLE MOVIMIENTOS(
+    idMovimiento NUMBER(8) CONSTRAINT PK_MOVIMIENTOS PRIMARY KEY,
+    importe NUMBER(10,2) CONSTRAINT NN_IMPORTE NOT NULL 
+                         CONSTRAINT CK_IMPORTE_POSITIVO CHECK (importe > 0),
+    tipo VARCHAR2(10) CONSTRAINT NN_TIPO_MOV NOT NULL 
+                      CONSTRAINT CK_TIPO_MOV CHECK (LOWER(tipo) IN ('ingreso','gasto')),
+    fecha DATE DEFAULT SYSDATE,
+    concepto VARCHAR2(100) CONSTRAINT NN_CONCEPTO NOT NULL,
+    -- Aquí va el campo para la foto del ticket
+    ticket_blob BLOB,
+    -- Campos para las FK
+    id_cuenta NUMBER(5),
+    id_categoria CHAR(5),
+    -- Definición de restricciones de clave foránea (Sigue el ejemplo de AUTOR_LIBRO)
+    CONSTRAINT FK_MOV_CUENTA FOREIGN KEY (id_cuenta) REFERENCES CUENTAS(idCuenta),
+    CONSTRAINT FK_MOV_CATEGORIA FOREIGN KEY (id_categoria) REFERENCES CATEGORIAS(idCategoria)
+);
+
