@@ -4,8 +4,9 @@ ciudad, n�meros y nombres de sus empleados.Mostrar todas las oficinas aunque n
 empleados asignados*/
 
 SELECT  o.idoficina, o.region, o.ciudad, e.idempleado, e.nombre 
-FROM oficinas o JOIN empleados e ON  e.idoficina = o.idoficina 
-WHERE LOWER(o.region)= 'este';
+FROM oficinas o LEFT JOIN empleados e ON  e.idoficina = o.idoficina 
+WHERE LOWER(o.region)= 'este'
+order by 1;
 
 
 /*2.- Listar los pedidos mostrando su n�mero, 
@@ -22,7 +23,7 @@ la ciudad y regi�n en donde trabaja.
 Mostrar todos los empleados aunque no tengan oficina asignada.*/
 
 SELECT e.*, o.ciudad, o.region
-     FROM EMPLEADOS e RIGHT JOIN OFICINAS o --O FULL JOIN
+     FROM OFICINAS o RIGHT JOIN EMPLEADOS e --O FULL JOIN
      ON e.idoficina = o.idoficina
      ORDER BY idempleado;
 
@@ -73,7 +74,7 @@ tienen jefe o no.*/
 SELECT e.*, j.idempleado AS "ID JEFE", j.nombre AS "NOMBRE DEL JEFE", j.cuota AS "CUOTA DEL JEFE"
     FROM EMPLEADOS e LEFT JOIN EMPLEADOS j
     ON e.jefe = j.idempleado
-    WHERE e.cuota > j.cuota OR e.jefe IS NULL;
+    WHERE (e.cuota > j.cuota OR e.cuota IS NULL);
 
 /*8.- Listar todos los pedidos en los que se hayan comprado cucharas o cuchillos. 
 Debemos mostrar el n�mero de pedido, la cantidad e importe de las l�neas de pedido que las contengan 
@@ -83,7 +84,7 @@ SELECT p.numpedido, lp.cantidad, (lp.punitario*lp.cantidad) || ' €' AS "IMPORT
     FROM PRODUCTOS pr JOIN LINEAS_PEDIDOS lp 
     ON pr.idfabricante = lp.fabricante AND pr.idproducto = lp.producto 
     JOIN PEDIDOS p on p.codigo = lp.codigo
-    AND (LOWER(pr.descripcion) LIKE '%cuchara%' OR LOWER (pr.descripcion) LIKE '%cuchillo%');
+    WHERE (LOWER(pr.descripcion) LIKE '%cuchara%' OR LOWER (pr.descripcion) LIKE '%cuchillo%');
 
 /*9.- Listar el n�mero de pedidos e importe de los mismos que cada empleado ha realizado a cada cliente.
 Se mostrar� el n�mero y nombre del cliente, el n�mero y nombre del empleado, la cantidad de pedidos y el importe del pedido.*/
