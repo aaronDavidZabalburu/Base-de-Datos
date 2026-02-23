@@ -32,3 +32,61 @@ SELECT DESCRIPCION, punitario || ' €' FROM PRODUCTOS
 WHERE PUNITARIO IN (SELECT MIN(PUNITARIO) FROM PRODUCTOS
 WHERE LOWER (IDFABRICANTE) LIKE 'asa') AND LOWER (IDFABRICANTE) LIKE 'asa';
 
+--8
+SELECT CIUDAD, DIRECTOR FROM OFICINAS
+WHERE VENTAS IN (SELECT MAX(VENTAS) FROM OFICINAS);
+
+--9
+SELECT CODIGO, FPEDIDO FROM PEDIDOS 
+WHERE FPEDIDO IN (SELECT MAX(FPEDIDO) FROM PEDIDOS);
+
+--10 
+SELECT NOMBRE FROM CLIENTES 
+WHERE IDCLIENTE = (
+    SELECT  p.idcliente
+        FROM LINEAS_PEDIDOS lp, PEDIDOS p
+        WHERE p.codigo = lp.codigo
+        GROUP BY p.idcliente
+            HAVING SUM(lp.punitario*lp.cantidad) = (
+                SELECT MAX(SUM(lp.punitario*lp.cantidad))
+                FROM LINEAS_PEDIDOS lp, PEDIDOS p
+                WHERE p.codigo = lp.codigo
+                GROUP BY p.idcliente
+            ));
+            
+-- EXISTS --
+/*
+SOLOP SON OBLIGATORIAS CUANDO LA CONSULTA ESTA UNIDA CON DOS CLAVES PRIMARIAS
+*/
+SELECT DISTINCT descripcion FROM PRODUCTOS pro
+    WHERE EXISTS (
+        SELECT * FROM LINEAS_PEDIDOS lp
+        WHERE pro.idfabricante = lp.fabricante
+        AND pro.idproducto = lp.producto AND EXISTS
+        (   SELECT * FROM pedidos p
+            WHERE p.codigo = lp.codigo AND
+            p.idcliente = 9101
+        ));
+
+--11
+SELECT * FROM CLIENTES;
+SELECT nombre FROM CLIENTES c
+    WHERE EXISTS (
+        SELECT * FROM EMPLEADOS e
+        WHERE c.representante = e.idempleado
+        AND LOWER(e.nombre) LIKE 'pedro vazquez %'
+    );
+
+SELECT o.idoficina, o.ciudad, o.director FROM OFICINAS o
+    WHERE EXISTS(
+        SELECT * FROM EMPLEADOS e
+        WHERE o.idoficina = e.idoficina AND
+        LOWER(e.nombre) LIKE 'andres diaz %'
+    );
+
+
+
+    
+    
+    
+    
