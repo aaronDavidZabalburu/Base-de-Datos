@@ -29,7 +29,7 @@ SELECT IDEMPLEADO, NOMBRE, IDOFICINA FROM EMPLEADOS e
 SELECT e.IDEMPLEADO, e.NOMBRE, e.IDOFICINA FROM EMPLEADOS e
     JOIN OFICINAS o ON e.IDOFICINA = o.IDOFICINA WHERE LOWER(e.puesto) LIKE 'comercial%'
     AND o.OBJETIVO < o.VENTAS;
-/*3.- Listar los vendedores que no trabajan en oficinas dirigidas por el empleado Jose Miguel Estrella Lopez.*/
+/*3.- Listar los vendedores que no trabajan en oficinas dirigidas por el empleado Miguel Estrella Lopez.*/
 
 
 /*4.- Listar los productos (idfab, idproducto y descripci�n) que aparecen en pedidos de m�s de 25000� o m�s.*/
