@@ -26,7 +26,7 @@ FROM OFICINAS
 WHERE DIRECTOR IN (
     SELECT IDEMPLEADO
     FROM EMPLEADOS
-    WHERE LOWER(NOMBRE) LIKE '%estrella%')
+    WHERE LOWER(NOMBRE) LIKE 'miguel estrella%')
 AND LOWER(CIUDAD) != 'valencia'
 AND VENTAS > 500000;
 
@@ -42,6 +42,11 @@ WHERE IDEMPLEADO IN (
     HAVING SUM(lp.PUNITARIO * lp.CANTIDAD) > 10000);
 /*5.- Mostrar todos los datos de las oficinas del este y que su objetivo sea menor que las ventas de todos sus empleados.*/
 
+SELECT * FROM OFICINAS o
+    Where objetivo <(
+        SELECT MIN(ventas) FROM EMPLEADOS e
+        where o.idoficina = e.idoficina)
+    AND LOWER(region)='este';
 
 /*6.- Mostrar los nombres de los clientes que en el a�o 2007 han comprado alg�n mantel de cualquier fabricante.*/
 SELECT NOMBRE
