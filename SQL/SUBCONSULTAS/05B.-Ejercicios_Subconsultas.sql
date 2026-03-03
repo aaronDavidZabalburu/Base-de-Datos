@@ -60,6 +60,17 @@ WHERE IDCLIENTE IN (
     WHERE EXTRACT(YEAR FROM p.FPEDIDO) = 2007
     AND LOWER(pr.DESCRIPCION) LIKE '%mantel%');
 /*7.- Mostrar los nombres de los clientes (sin valores repetidos) que en el a�o 2007 han comprado un mantel del fabricante bra.*/
+SELECT NOMBRE
+FROM CLIENTES
+WHERE IDCLIENTE IN (
+    SELECT DISTINCT p.IDCLIENTE
+    FROM PEDIDOS p
+    JOIN LINEAS_PEDIDOS lp ON p.CODIGO = lp.CODIGO
+    JOIN PRODUCTOS pr ON lp.FABRICANTE = pr.IDFABRICANTE
+        AND lp.PRODUCTO = pr.IDPRODUCTO
+    WHERE EXTRACT(YEAR FROM p.FPEDIDO) = 2007
+    AND LOWER(pr.DESCRIPCION) LIKE '%mantel%'
+    AND LOWER(idfabricante) LIKE '%bra%');
 
 
 /*8.- Mostrar el nombre de los empleados que fueron contratados antes de la fecha en que se realiz� el primer pedido.*/
@@ -79,4 +90,15 @@ WHERE IDEMPLEADO IN (
     GROUP BY JEFE
     HAVING COUNT(*) > 4);
 
-/*10.-Mostrar los nombres de los jefes cuyas ventas sean menores que las de todos sus empleados.*/
+/*10.-Mostrar los nombres de los jefes cuyas ventas 
+sean menores que las de todos sus empleados.*/
+SELECT idempleado,nombre FROM EMPLEADOS
+WHERE idempleado IN (
+        SELECT e.JEFE
+            FROM EMPLEADOS e JOIN empleados j
+            on e.jefe = j.idempleado
+            GROUP BY e.jefe, j.ventas
+            HAVING SUM(e.ventas) > j.ventas);
+
+
+
