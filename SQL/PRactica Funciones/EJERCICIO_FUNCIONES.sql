@@ -60,25 +60,50 @@ SELECT NOMBRE
 
 SELECT NOMBRE, SUBSTR(NOMBRE,INSTR(nombre,' ')+1,INSTR(nombre,' ',1,2)-INSTR(nombre,' ')-1) || ' , '
     ||  SUBSTR(nombre,1,INSTR(nombre,' ')-1) "APELLIDO Y NOMBRE",
-    SUBSTR(nombre,1,1) || SUBSTR(nombre, INSTR(NOMBRE,' ',1)+1,1) || SUBSTR(nombre, INSTR(NOMBRE,' ',1,2)+1,1)
+    SUBSTR(nombre,1,1) || SUBSTR(nombre, INSTR(NOMBRE,' ',1)+1,1) || SUBSTR(nombre, INSTR(NOMBRE,' ',1,2)+1,1) "INICIALES"
         FROM CLIENTES;
 
 
-4.- Dada la tabla EMPLEADOS se debe mostrar el nombre del empleado y en otra columna ,
-la fecha de contrato, fecha de contrato formateada. Esta fecha seguirá el siguiente formato:
-“Comenzó el 10 de octubre de 1980”
+--4.- Dada la tabla EMPLEADOS se debe mostrar el nombre del empleado y en otra columna ,
+--la fecha de contrato, fecha de contrato formateada. Esta fecha seguirá el siguiente formato:
+--“Comenzó el 10 de octubre de 1980”
 
-5.- Dada la tabla de empleados mostrar el nombre del empleado y el número de caracteres
-que tiene su nombre completo, su nombre, el número de caracteres que ocupa el nombre y 
-sus apellidos y el número de caracteres que ocupan sus apellidos.
+SELECT NOMBRE, FCONTRATO, TO_CHAR(FCONTRATO, '"Comenzó el " dd "de " MONTH "de" yyyy ') "Fecha Formateada"
+    FROM EMPLEADOS;
 
-6.- Convierte la cadena ‘010726’ a fecha y muestra el nombre del mes en letras mayúsculas. (Lanzar la orden contra DUAL)
+--5.- Dada la tabla de empleados mostrar el nombre del empleado y el número de caracteres
+--que tiene su nombre completo, su nombre, el número de caracteres que ocupa el nombre y 
+--sus apellidos y el número de caracteres que ocupan sus apellidos.
 
-7.- A partir de la tabla EMPLEADOS mostrar aquellos que llevan más de 25 años trabajando.
+SELECT NOMBRE, LENGTH(NOMBRE) "Total de caracteres",
+            LENGTH(SUBSTR(nombre,1,INSTR(nombre,' ')-1)) "Numero caracteres del nombre",
+            LENGTH(SUBSTR(NOMBRE,INSTR(nombre,' ')+1)) "Numero caracteres Apellidos"
+FROM EMPLEADOS;
 
-8.- Mostrar el apellido de aquellos empleados que llevan trabajando más de 25 años en las oficinas de Valencia.
- 
-9.- Dadas las oficinas mostrar si su objetivo es menor de 300.000 “BAJO”, si está entre 300.000 y 500.000 “MEDIO” y superior a 500.000 “ALTO” y mostrar sus ventas y si han sido BAJAS, MEDIAS o ALTAS (mismos valores que para el objetivo).
+--6.- Convierte la cadena ‘010726’ a fecha y muestra 
+--el nombre del mes en letras mayúsculas. (Lanzar la orden contra DUAL)
+
+SELECT TO_CHAR(TO_DATE('010726', 'DDMMYYYY'), 'MONTH') from dual;
+
+--7.- A partir de la tabla EMPLEADOS mostrar aquellos que llevan más de 25 años trabajando.
+SELECT NOMBRE, FCONTRATO, TRUNC((MONTHS_BETWEEN(sysdate, fcontrato)/12)) || ' Años' "Años trabajados"
+FROM EMPLEADOS
+WHERE TRUNC((MONTHS_BETWEEN(sysdate, fcontrato)/12)) > 25;
+
+--8.- Mostrar el apellido de aquellos empleados que 
+--llevan trabajando más de 25 años en las oficinas de Valencia.
+
+SELECT NOMBRE, TRUNC((MONTHS_BETWEEN(sysdate, fcontrato)/12)) || ' Años' "Años trabajados"
+FROM EMPLEADOS
+WHERE TRUNC((MONTHS_BETWEEN(sysdate, fcontrato)/12)) > 25
+    AND IDOFICINA IN (SELECT IDOFICINA FROM OFICINAS
+ WHERE LOWER(CIUDAD) LIKE 'valencia' );
+ 
+--9.- Dadas las oficinas mostrar si su objetivo es menor de 300.000 “BAJO”,
+--si está entre 300.000 y 500.000 “MEDIO” y superior a 500.000 “ALTO”
+--y mostrar sus ventas y si han sido BAJAS, MEDIAS o ALTAS (mismos valores que para el objetivo).
+
+
 
 10.- Mostrar por cada cliente que ha hecho pedidos si es buen cliente, cliente básico 
 si el valor total de los importes de sus pedidos es superior a 20.000 € (buen cliente),
