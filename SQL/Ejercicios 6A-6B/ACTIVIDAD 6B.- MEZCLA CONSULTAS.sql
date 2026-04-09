@@ -1,86 +1,201 @@
 /*1A.-  Mostrar todos los pedidos realizados en enero de 2007 
-con un precio superior a 25000€. Mostrar el número de pedido y 
-número del empleado que lo ha realizado, 
-número del cliente que lo ha pedido ,
+con un precio superior a 25000ï¿½. Mostrar el nï¿½mero de pedido y 
+nï¿½mero del empleado que lo ha realizado, 
+nï¿½mero del cliente que lo ha pedido ,
 fecha del pedido  e importe (correctamente formateado). (1 punto)*/
 
-/*1B.- Mostrar todos los pedidos realizados en enero de 2007 con un precio superior a 25000€.
-Mostrar el número de pedido y nombre del empleado que lo ha realizado,
+SELECT p.NUMPEDIDO, p.IDVENDEDOR, p.IDCLIENTE, p.FPEDIDO, 
+       TO_CHAR(SUM(lp.PUNITARIO * lp.CANTIDAD), '999G999D99') || ' â‚¬' AS IMPORTE
+FROM PEDIDOS p
+JOIN LINEAS_PEDIDOS lp ON p.CODIGO = lp.CODIGO
+WHERE EXTRACT(MONTH FROM p.fpedido) = 5
+AND EXTRACT(YEAR FROM p.fpedido) = 2007
+GROUP BY p.NUMPEDIDO, p.IDVENDEDOR, p.IDCLIENTE, p.FPEDIDO
+HAVING SUM(lp.PUNITARIO * lp.CANTIDAD) > 25000;
+
+
+/*1B.- Mostrar todos los pedidos realizados en enero de 2007 con un precio superior a 25000ï¿½.
+Mostrar el nï¿½mero de pedido y nombre del empleado que lo ha realizado,
 nombre del cliente que lo ha pedido, fecha del pedido 
 (formato largo ejemplo: lunes, 10 de junio de 2007) 
 e importe (correctamente formateado). */
 
+SELECT p.NUMPEDIDO, e.NOMBRE AS EMPLEADO, c.NOMBRE AS CLIENTE,
+       TO_CHAR(p.FPEDIDO, 'day DD "de" Month "de" YYYY') AS FECHA,
+       TO_CHAR(SUM(l.PUNITARIO * l.CANTIDAD), '999G999D99') || ' â‚¬' AS IMPORTE
+FROM PEDIDOS p
+JOIN LINEAS_PEDIDOS lp ON p.CODIGO = lp.CODIGO
+JOIN EMPLEADOS e ON p.IDVENDEDOR = e.IDEMPLEADO
+JOIN CLIENTES c ON p.IDCLIENTE = c.IDCLIENTE
+WHERE EXTRACT(MONTH FROM p.fpedido) = 5
+AND EXTRACT(YEAR FROM p.fpedido) = 2007
+GROUP BY p.NUMPEDIDO, e.NOMBRE, c.NOMBRE, p.FPEDIDO
+HAVING SUM(lp.PUNITARIO * lp.CANTIDAD) > 5000;
 
-/*2.- Mostrar el número de oficina, ciudad y director de aquellas oficinas que
+
+/*2.- Mostrar el nï¿½mero de oficina, ciudad y director de aquellas oficinas que
 no tienen empleados asignados. */
 
+SELECT IDOFICINA, CIUDAD, DIRECTOR
+FROM OFICINAS
+WHERE IDOFICINA NOT IN (SELECT DISTINCT IDOFICINA FROM EMPLEADOS WHERE IDOFICINA IS NOT NULL);
 
 /*3.- Quiero mostrar cuantos productos se han pedido del fabricante aci y del fabricante rei.
-Mostrar fabricante y número de productos pedidos. */
+Mostrar fabricante y nï¿½mero de productos pedidos. */
 
+SELECT FABRICANTE, COUNT(*)  "PRODUCTOS_PEDIDOS"
+FROM LINEAS_PEDIDOS
+WHERE LOWER(FABRICANTE) IN ('asa', 'bra')
+GROUP BY FABRICANTE;
 
 /*4.- Mostrar cuantos productos se han pedido de cada fabricante.
 Mostrar fabricante y cantidad de productos. */
 
-
+SELECT FABRICANTE, COUNT(*) AS CANTIDAD_PRODUCTOS
+FROM LINEAS_PEDIDOS
+GROUP BY FABRICANTE;
 
 /*5.- Mostrar el nombre de los empleados, nombre de sus jefes, sus ventas y cuotas y las de sus jefes.
 En el listado deben aparecer todos los empleados, tanto si tienen, jefe, como si no. */
 
-
+SELECT e.NOMBRE AS EMPLEADO, j.NOMBRE AS JEFE, 
+       e.VENTAS AS VENTAS_EMP, e.CUOTA AS CUOTA_EMP,
+       j.VENTAS AS VENTAS_JEFE, j.CUOTA AS CUOTA_JEFE
+FROM EMPLEADOS e
+LEFT JOIN EMPLEADOS j ON e.JEFE = j.IDEMPLEADO;
 
 /*6.- Listar la oficina que tenga un objetivo mayor de las que tienen director. 
-Se deben mostrar los campos de número de oficina, nombre del director, 
-objetivo y un objetivo para el año que viene que será el objetivo incrementado en un 5%.
+Se deben mostrar los campos de nï¿½mero de oficina, nombre del director, 
+objetivo y un objetivo para el aï¿½o que viene que serï¿½ el objetivo incrementado en un 5%.
 A este nuevo campo lo vamos a denominar Objetivo 2023. */
 
+SELECT o.IDOFICINA, e.NOMBRE  "DIRECTOR", o.OBJETIVO,
+       (o.OBJETIVO * 1.05) "Objetivo 2023"
+FROM OFICINAS o
+JOIN EMPLEADOS e ON o.DIRECTOR = e.IDEMPLEADO
+WHERE o.OBJETIVO = (SELECT MAX(OBJETIVO) FROM OFICINAS WHERE DIRECTOR IS NOT NULL);
 
 
 /*7.- Listar las oficinas en donde todos los vendedores tienen ventas que superan al 50% 
-del objetivo de su oficina. Mostrar de cada oficina el número, región y objetivo. */
+del objetivo de su oficina. Mostrar de cada oficina el nï¿½mero, regiï¿½n y objetivo. */
 
+SELECT IDOFICINA, REGION, OBJETIVO
+FROM OFICINAS o
+WHERE NOT EXISTS (
+    SELECT idempleado FROM EMPLEADOS e 
+    WHERE e.IDOFICINA = o.IDOFICINA 
+    AND e.VENTAS <= (o.OBJETIVO * 0.5)
+);
 
 
 /*8.- Estamos haciendo un control de existencias y debemos mostrar
 por cada uno de nuestros productos si los pedidos son urgentes, 
 para dentro de una semana, para dentro de un mes.
-Si el campo existencias es menor de 50 unidades el pedido será urgente (URGENTE).
-Si está entre 51 y 150 será para dentro de una semana (SEMANA) 
-y si es superior a 150 será para dentro de un mes (MES). 
-Esta consulta debe mostrar el fabricante, descripción, 
-existencias y la petición del pedido mostrando URGENTE, SEMANA o MES. */
+Si el campo existencias es menor de 50 unidades el pedido serï¿½ urgente (URGENTE).
+Si estï¿½ entre 51 y 150 serï¿½ para dentro de una semana (SEMANA) 
+y si es superior a 150 serï¿½ para dentro de un mes (MES). 
+Esta consulta debe mostrar el fabricante, descripciï¿½n, 
+existencias y la peticiï¿½n del pedido mostrando URGENTE, SEMANA o MES. */
+
+SELECT IDFABRICANTE, DESCRIPCION, STOCK,
+       CASE 
+          WHEN STOCK < 50 THEN 'URGENTE'
+          WHEN STOCK BETWEEN 51 AND 150 THEN 'SEMANA'
+          ELSE 'MES'
+       END AS PETICION
+FROM PRODUCTOS;
 
 
-/*9.- Mostrar el precio medio de los productos de cada fabricante que superen los 500 €.
-El precio debe aparecer con dos decimales y el símbolo del euro por detrás.
+/*9.- Mostrar el precio medio de los productos de cada fabricante que superen los 500 ï¿½.
+El precio debe aparecer con dos decimales y el sï¿½mbolo del euro por detrï¿½s.
 Mostrar Fabricante y un campo denominado Precio Medio Productos. */
 
+SELECT IDFABRICANTE, 
+       TO_CHAR(ROUND(AVG(PUNITARIO), 2), '999G999D99') || ' â‚¬' AS "Precio Medio Productos"
+FROM PRODUCTOS
+GROUP BY IDFABRICANTE
+HAVING AVG(PUNITARIO) > 10;
 
 /*10.- Mostrar para cada empleado su nombre, su campo ventas, y 
-calcular el premio que van a conseguir según las ventas conseguidas,
+calcular el premio que van a conseguir segï¿½n las ventas conseguidas,
 
-Si las ventas son inferiores a 100000 no se dará premio.
-Si las ventas son inferiores a 200000 el premio será de 100€.
-Si las ventas son inferiores a 300000 el premio será de 200€.
-Si las ventas son inferiores a 400000 el premio será de 300€.
-Si las ventas son superiores a 400000 el premio será de 500€.
-Tanto la fecha del pedido como la fecha del envío debe ser mostrada 
-con el siguiente formato: día de mes de año (por ejemplo: 7-marzo-2012).*/
+Si las ventas son inferiores a 100000 no se darï¿½ premio.
+Si las ventas son inferiores a 200000 el premio serï¿½ de 100ï¿½.
+Si las ventas son inferiores a 300000 el premio serï¿½ de 200ï¿½.
+Si las ventas son inferiores a 400000 el premio serï¿½ de 300ï¿½.
+Si las ventas son superiores a 400000 el premio serï¿½ de 500ï¿½.
+Tanto la fecha del pedido como la fecha del envï¿½o debe ser mostrada 
+con el siguiente formato: dï¿½a de mes de aï¿½o (por ejemplo: 7-marzo-2012).*/
+
+SELECT NOMBRE, VENTAS,
+       CASE 
+          WHEN VENTAS < 100000 THEN 0
+          WHEN VENTAS < 200000 THEN 100
+          WHEN VENTAS < 300000 THEN 200
+          WHEN VENTAS < 400000 THEN 300
+          ELSE 500
+       END  "PREMIO"
+FROM EMPLEADOS;
 
 /*11.- Mostrar de cada empleado su nombre, el nombre de su jefe solo de aquellos empleados
 que su jefe haya sido contratado posteriormente a ellos. 
-Aparecerán en el listado también aquellos empleados que no tienen jefe. */  
+Aparecerï¿½n en el listado tambiï¿½n aquellos empleados que no tienen jefe. */  
 
-/*12.- Mostrar por cada empleado el importe mínimo que ha realizado en un pedido
-y el importe máximo en el año 2007. Mostrar nombre del empleado, importe mínimo e importe máximo. */
+SELECT e.NOMBRE "EMPLEADO", j.NOMBRE "JEFE"
+FROM EMPLEADOS e
+LEFT JOIN EMPLEADOS j ON e.JEFE = j.IDEMPLEADO
+WHERE j.FCONTRATO > e.FCONTRATO OR e.JEFE IS NULL;
+
+
+/*12.- Mostrar por cada empleado el importe mï¿½nimo que ha realizado en un pedido
+y el importe mï¿½ximo en el aï¿½o 2007. Mostrar nombre del empleado, importe mï¿½nimo e importe mï¿½ximo. */
+
+SELECT e.NOMBRE, MIN(totales.TOTAL) "MIN 2007", MAX(totales.TOTAL)  "MAX 2007"
+FROM EMPLEADOS e
+JOIN (
+    SELECT IDVENDEDOR, FPEDIDO, SUM(PUNITARIO * CANTIDAD) "TOTAL"
+    FROM PEDIDOS p
+    JOIN LINEAS_PEDIDOS lp ON p.CODIGO = lp.CODIGO
+    GROUP BY p.CODIGO, p.IDVENDEDOR, p.FPEDIDO
+) totales ON e.IDEMPLEADO = totales.IDVENDEDOR
+WHERE EXTRACT(YEAR FROM totales.fpedido) = 2007
+GROUP BY e.NOMBRE;
 
 /*13.- Mostrar los pedidos que ha realizado Ana Bustamante en Julio del 97.
-Mostrar el número de pedido, fecha del pedido en formato largo 
-(p ej: miércoles, 3 de mayo de 2012), y el importe.
-El importe debe aparecer con dos decimales y el símbolo del € detrás. */
+Mostrar el nï¿½mero de pedido, fecha del pedido en formato largo 
+(p ej: miï¿½rcoles, 3 de mayo de 2012), y el importe.
+El importe debe aparecer con dos decimales y el sï¿½mbolo del ï¿½ detrï¿½s. */
+
+SELECT p.NUMPEDIDO, 
+       TO_CHAR(p.FPEDIDO, 'day, DD "de" Month "de" YYYY') "FECHA",
+       TO_CHAR(SUM(lp.PUNITARIO * lp.CANTIDAD), '999G999D99') || ' â‚¬' "IMPORTE"
+FROM PEDIDOS p
+JOIN LINEAS_PEDIDOS lp ON p.CODIGO = lp.CODIGO
+JOIN CLIENTES c ON p.idcliente = c.idcliente
+WHERE LOWER(c.NOMBRE) = 'ana bustamante' 
+  AND EXTRACT(MONTH FROM p.fpedido) = 7
+AND EXTRACT(YEAR FROM p.fpedido) = 1997
+GROUP BY p.NUMPEDIDO, p.FPEDIDO;
+
 
 /*14.- Se quiere incrementar el objetivo de las oficinas por regiones,
-a aquellas del norte se les incrementará su objetivo en un 5%,
+a aquellas del norte se les incrementarï¿½ su objetivo en un 5%,
 a las del este en un 3% a las del oeste en un 2% y al resto en un 7%.
-Mostrar en el listado el número de oficina, región, porcentaje a incrementar,
+Mostrar en el listado el nï¿½mero de oficina, regiï¿½n, porcentaje a incrementar,
 el objetivo actual y el objetivo actualizado con el incremento. */
+
+
+SELECT IDOFICINA, REGION, OBJETIVO "OBJETIVO ACTUAL",
+       CASE 
+          WHEN REGION = 'NORTE' THEN '5%'
+          WHEN REGION = 'ESTE' THEN '3%'
+          WHEN REGION = 'OESTE' THEN '2%'
+          ELSE '7%'
+       END "PORCENTAJE",
+       CASE 
+          WHEN REGION = 'NORTE' THEN OBJETIVO * 1.05
+          WHEN REGION = 'ESTE' THEN OBJETIVO * 1.03
+          WHEN REGION = 'OESTE' THEN OBJETIVO * 1.02
+          ELSE OBJETIVO * 1.07
+       END  "OBJETIVO ACTUALIZADO"
+FROM OFICINAS;

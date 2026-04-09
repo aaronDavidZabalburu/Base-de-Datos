@@ -1,6 +1,6 @@
 /* EJEMPLOS FUNCIONES*/
 
-/****************1 FUNCIONES MATEMÁTICAS**********************/
+/****************1 FUNCIONES MATEMï¿½TICAS**********************/
 
 SELECT ROUND(100.34) FROM DUAL;
 SELECT ROUND(100.84) FROM DUAL;
@@ -8,7 +8,7 @@ SELECT ROUND(100.84) FROM DUAL;
 SELECT TRUNC(100.34) FROM DUAL;
 SELECT TRUNC(100.84) FROM DUAL;
 
-SELECT ROUND(100.34,1) FROM DUAL;
+SELECT ROUND(100.34,2) FROM DUAL;
 SELECT ROUND(100.85,1) FROM DUAL;
 
 SELECT TRUNC(100.34,1) FROM DUAL;
@@ -91,7 +91,7 @@ SELECT nombre,SUBSTR(nombre,INSTR(nombre,' ',1,2)+1) "SEGUNDO APELLIDO" FROM emp
 
 SELECT nombre,SUBSTR(nombre,INSTR(nombre,' ')+1,INSTR(nombre,' ',1,2)-INSTR(nombre,' ')-1) "PRIMER APELLIDO" FROM empleados;
 
---4.  Mostrar el primer apellido de los empleados que tienen nombre compuesto (Jose Luis, Ana María,...)
+--4.  Mostrar el primer apellido de los empleados que tienen nombre compuesto (Jose Luis, Ana Marï¿½a,...)
 
 SELECT nombre,SUBSTR(nombre,INSTR(nombre,' ',1,2)+1,INSTR(nombre,' ',1,3)-INSTR(nombre,' ',1,2)-1) FROM empleados;
 
@@ -116,7 +116,7 @@ SELECT nombre,LOWER(SUBSTR(nombre,1,1) || '.'
 || SUBSTR(nombre,INSTR(nombre,' ',1,2)+1,1) || '@zabalburu.org') FROM empleados;
 
 /***************************************************************************************************************************/ 
---7. MOSTRAR descripción + de +  fabricante, color, tamaÃ±o y 
+--7. MOSTRAR descripciï¿½n + de +  fabricante, color, tamaÃ±o y 
 fecha de compra de los manteles que ha comprado ESTEFANIA GARCIA ANTON */ 
 
 /* PASO 1 */
@@ -197,7 +197,7 @@ SELECT CHR(126) FROM DUAL;
 
 /*************************NVL  - NVL2 ***********************************************************************
 NVL y NVL2: Condicion Nulos: 
---NVL: Muestran el valor indicado en el segundo parámetro si el campo pasado como primer parametro tiene valor nulo*/
+--NVL: Muestran el valor indicado en el segundo parï¿½metro si el campo pasado como primer parametro tiene valor nulo*/
 --NVL2: Muestra un valor si el campo pasado a la funcion no es nulo y otro si el valor es nulo
 */
 
@@ -285,7 +285,7 @@ ventas*1.10 "OBJETIVO 2021" FROM empleados;
 /* Mostrar un campo con la cuota incrementada dependiendo del puesto que ocupan nuestros empleados:
 
 Comerciales:5%
-Directores de área:2%
+Directores de ï¿½rea:2%
 Directrores de Ventas:2,5%
 Resto de empleados: 3%
 */
@@ -315,7 +315,7 @@ FROM empleados;
 /* Mostrar un campo con la cuota incrementada dependiendo del puesto que ocupan nuestros empleados:
 
 Comerciales:5%
-Directores de área:2%
+Directores de ï¿½rea:2%
 Directrores de Ventas:2,5%
 Resto de empleados: 3%
 */
@@ -338,7 +338,7 @@ END "INCREMENTO DE LA CUOTA"
 
 FROM empleados;
 
-/*Mostrar un nuevo campo denominado Objetivo2026 que serán las ventas incrementadas en un porcentaje según el 
+/*Mostrar un nuevo campo denominado Objetivo2026 que serï¿½n las ventas incrementadas en un porcentaje segï¿½n el 
 puesto de trabajo que ocupe en la empresa:
 comerciales incrementaremos en un 1%, director general en un 15%, director area en un 5% */
 
@@ -359,12 +359,12 @@ ventas
 END "Objetivo 2026"
 FROM empleados;
 
-/* Poner una calificación a los empleados en un nuevo campo que será en función de las ventas
+/* Poner una calificaciï¿½n a los empleados en un nuevo campo que serï¿½ en funciï¿½n de las ventas
  que haya hecho cada empleado:
-Si las ventas son nulas aparecerá el mensaje NO REALZIA VENTAS,
-Si las ventas son menores a 250000 aparecerá el mensaje VENDEDOR REGULAR
-Si las ventas están entre 250000 y 500000 aparecerá el mensaje BUEN VENDEDOR 
-Si las ventas son superiores a 500000 aparecerá el mensaje VENDEDOR EXCEPCIONAL*/
+Si las ventas son nulas aparecerï¿½ el mensaje NO REALZIA VENTAS,
+Si las ventas son menores a 250000 aparecerï¿½ el mensaje VENDEDOR REGULAR
+Si las ventas estï¿½n entre 250000 y 500000 aparecerï¿½ el mensaje BUEN VENDEDOR 
+Si las ventas son superiores a 500000 aparecerï¿½ el mensaje VENDEDOR EXCEPCIONAL*/
 
 SELECT nombre,ventas,
 CASE 
