@@ -103,25 +103,94 @@ WHERE TRUNC((MONTHS_BETWEEN(sysdate, fcontrato)/12)) > 25
 --si está entre 300.000 y 500.000 “MEDIO” y superior a 500.000 “ALTO”
 --y mostrar sus ventas y si han sido BAJAS, MEDIAS o ALTAS (mismos valores que para el objetivo).
 
+SELECT IDOFICINA, 
+       OBJETIVO,
+       CASE 
+           WHEN OBJETIVO < 300000 THEN 'BAJO'
+           WHEN OBJETIVO BETWEEN 300000 AND 500000 THEN 'MEDIO'
+           ELSE 'ALTO'
+       END AS "RANGO OBJETIVO",
+       VENTAS,
+       CASE 
+           WHEN VENTAS < 300000 THEN 'BAJAS'
+           WHEN VENTAS BETWEEN 300000 AND 500000 THEN 'MEDIAS'
+           ELSE 'ALTAS'
+       END AS "RANGO VENTAS"
+FROM OFICINAS;
+
+--10.- Mostrar por cada cliente que ha hecho pedidos si es buen cliente, cliente básico 
+--si el valor total de los importes de sus pedidos es superior a 20.000 € (buen cliente),
+--menor que 5000 (cliente básico), o entre estas dos cifras (Cliente potencial).
+
+SELECT p.IDCLIENTE, 
+       SUM(lp.punitario * lp.cantidad) "TOTAL",
+       CASE 
+           WHEN SUM(lp.punitario * lp.cantidad) > 20000 THEN 'buen cliente'
+           WHEN SUM(lp.punitario * lp.cantidad) < 5000 THEN 'cliente básico'
+           ELSE 'Cliente potencial'
+       END AS "CLASIFICACION"
+FROM PEDIDOS p
+JOIN LINEAS_PEDIDOS lp ON p.codigo = lp.codigo
+GROUP BY IDCLIENTE;
+
+--11.- Mostrar la consulta anterior pero mostrando el nombre de cliente y si es buen cliente básico o potencial.
+
+SELECT p.IDCLIENTE, c.NOMBRE,
+       SUM(lp.punitario * lp.cantidad) "TOTAL",
+       CASE 
+           WHEN SUM(lp.punitario * lp.cantidad) > 20000 THEN 'buen cliente'
+           WHEN SUM(lp.punitario * lp.cantidad) < 5000 THEN 'cliente básico'
+           ELSE 'Cliente potencial'
+       END AS "CLASIFICACION"
+FROM PEDIDOS p
+JOIN LINEAS_PEDIDOS lp ON p.codigo = lp.codigo
+JOIN CLIENTES c ON p.idcliente = c.idcliente
+GROUP BY p.IDCLIENTE, c.NOMBRE;
+
+--12.- Mostrar el precio medio de los productos de cada fabricante. 
+--(Utilizar formato de cantidades numéricas mostraremos las cantidades con dos decimales y la moneda por detrás de la cantidad).
+
+SELECT IDFABRICANTE,
+    TO_CHAR(ROUND(AVG(PUNITARIO),2),  '999G999D99') || ' €'  "IMPORTE"
+    FROM PRODUCTOS
+    GROUP BY IDFABRICANTE;
 
 
-10.- Mostrar por cada cliente que ha hecho pedidos si es buen cliente, cliente básico 
-si el valor total de los importes de sus pedidos es superior a 20.000 € (buen cliente),
-menor que 5000 (cliente básico), o entre estas dos cifras (Cliente potencial).
+--13.- Mostrar la siguiente descripción de los manteles: 
+--mantel color tamaño 99x99 del fabricante nombre cuesta 99 euros.
+--El texto en negrita se sustituirá por su valor en la Base de Datos.
 
-11.- Mostrar la consulta anterior pero mostrando el nombre de cliente y si es buen cliente básico o potencial.
+SELECT 'mantel' ||  
+SUBSTR(DESCRIPCION, INSTR(DESCRIPCION, ' ', 1,3)) ||
+' tamaño ' || SUBSTR(DESCRIPCION, INSTR(DESCRIPCION, ' ', 1,2) + 1, INSTR(DESCRIPCION, ' ' , 1, 3) -  INSTR(DESCRIPCION, ' ', 1,2) - 1) ||
+' del fabricante ' || idfabricante || ' cuesta ' || punitario || '€'
+FROM PRODUCTOS
+WHERE LOWER(DESCRIPCION) LIKE '%mantel%';
 
-12.- Mostrar el precio medio de los productos de cada fabricante. 
-(Utilizar formato de cantidades numéricas mostraremos las cantidades con dos decimales y la moneda por detrás de la cantidad).
+--14.- Mostrar la descripción de los productos y a continuación una columna en donde aparezca
+--el texto CUBERTERÍA si son copas y vasos o TEXTIL si son manteles.
 
-13.- Mostrar la siguiente descripción de los manteles: 
-            mantel color tamaño 99x99 del fabricante nombre cuesta 99 euros.
-El texto en negrita se sustituirá por su valor en la Base de Datos.
+SELECT DESCRIPCION,
+       CASE 
+           WHEN LOWER(DESCRIPCION) LIKE '%copa%' OR LOWER(DESCRIPCION) LIKE '%vaso%' THEN 'CUBERTERÍA'
+           WHEN LOWER(DESCRIPCION) LIKE '%mantel%' THEN 'TEXTIL'
+           ELSE 'OTROS'
+       END AS "CATEGORÍA"
+FROM PRODUCTOS;
 
-14.- Mostrar la descripción de los productos y a continuación una columna en donde aparezca
-el texto CUBERTERÍA si son copas y vasos o TEXTIL si son manteles.
+--15.- Mostrar las descripciones de los productos y una nueva columna en donde verifiquemos si 
+--tenemos que comprar urgentemente un producto verificando que el stock es menor que el nivel 
+--de nuevo pedido si la diferencia está entre 10 unidades y 30 unidades  tendremos que realizar
+--una compra a medio plazo y si es superior a 30 será una compra a largo plazo.*/
 
-15.- Mostrar las descripciones de los productos y una nueva columna en donde verifiquemos si 
-tenemos que comprar urgentemente un producto verificando que el stock es menor que el nivel 
-de nuevo pedido si la diferencia está entre 10 unidades y 30 unidades  tendremos que realizar
-una compra a medio plazo y si es superior a 30 será una compra a largo plazo.*/
+SELECT DESCRIPCION, STOCK, NIVELNUEVOPEDIDO,
+       CASE 
+           WHEN STOCK < NIVELNUEVOPEDIDO THEN 'URGENTE'
+           WHEN (STOCK - NIVELNUEVOPEDIDO) BETWEEN 10 AND 30 THEN 'MEDIO PLAZO'
+           WHEN (STOCK - NIVELNUEVOPEDIDO) > 30 THEN 'LARGO PLAZO'
+       END AS "ESTADO COMPRA"
+FROM PRODUCTOS;
+
+
+
+
