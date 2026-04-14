@@ -142,10 +142,10 @@ d�a de mes de a�o (por ejemplo: 7 de marzo de 2012).
 SELECT c.NOMBRE, TO_CHAR(p.fpedido, 'day, DD "de" MONTH "de" YYYY')"FECHA de pedidos",
 TO_CHAR(
 CASE 
-    WHEN SUM(lp.punitario * cantidad) < 5000 THEN p.fpedido + 15
-    WHEN SUM(lp.punitario * cantidad) BETWEEN 5000 AND 15000 THEN p.fpedido + 10
-    WHEN SUM(lp.punitario * cantidad) BETWEEN 15000 AND 30000 THEN p.fpedido + 5
-    WHEN SUM(lp.punitario * cantidad) > 30000 THEN  p.fpedido + 1
+    WHEN SUM(lp.punitario * lp.cantidad) < 5000 THEN p.fpedido + 15
+    WHEN SUM(lp.punitario * lp.cantidad) BETWEEN 5000 AND 15000 THEN p.fpedido + 10
+    WHEN SUM(lp.punitario * lp.cantidad) BETWEEN 15000 AND 30000 THEN p.fpedido + 5
+    WHEN SUM(lp.punitario * lp.cantidad) > 30000 THEN  p.fpedido + 1
     END, 'DD "de" MONTH "de" YYYY')"FECHA ENVIO"
 FROM PEDIDOS p 
 JOIN CLIENTES c ON c.idcliente = p.idcliente
